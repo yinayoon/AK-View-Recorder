@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>동영상, Annotation, AMM, Caution, Note, Warning 이미지 선택</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .dropdown-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+    .video-wrapper, .image-wrapper, .annotation-container {
+      max-width: 800px;
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #000;
+    }
+    .annotation-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  /* JSON을 왼쪽 정렬 */
+  text-align: left; 
+}
+
+    .image-wrapper img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>동영상, Annotation, AMM, Caution, Note, Warning 이미지 선택</h1>
+  
+  <!-- 동영상 선택 드롭다운 -->
+  <div class="dropdown-container">
+    <label for="videoSelect">동영상 선택: </label>
+    <select id="videoSelect">
+      <option value="" selected disabled>동영상을 선택하세요</option>
+    </select>
+  </div>
+  <div class="video-wrapper">
+    <video id="videoPlayer" controls>
+      <source id="videoSource" src="" type="video/mp4">
+      동영상을 지원하지 않는 브라우저입니다.
+    </video>
+  </div>
+  
+  <!-- Annotation 선택 드롭다운 -->
+  <div class="dropdown-container">
+    <label for="annotationSelect">Annotation 선택: </label>
+    <select id="annotationSelect">
+      <option value="" selected disabled>Annotation 파일을 선택하세요</option>
+    </select>
+  </div>
+  <div class="annotation-container" id="annotationDisplay">
+    <!-- 선택한 Annotation JSON의 내용이 표시됩니다. -->
+  </div>
+
+  <!-- AMM 이미지 선택 드롭다운 -->
+  <div class="dropdown-container">
+    <label for="ammSelect">AMM 이미지 선택: </label>
+    <select id="ammSelect">
+      <option value="" selected disabled>AMM 이미지를 선택하세요</option>
+    </select>
+  </div>
+  <div class="image-wrapper" id="ammImageDisplay">
+    <!-- 선택한 AMM 이미지가 표시됩니다. -->
+  </div>
+
+  <!-- Caution 이미지 선택 드롭다운 -->
+  <div class="dropdown-container">
+    <label for="cautionSelect">Caution 이미지 선택: </label>
+    <select id="cautionSelect">
+      <option value="" selected disabled>Caution 이미지를 선택하세요</option>
+    </select>
+  </div>
+  <div class="image-wrapper" id="cautionImageDisplay">
+    <!-- 선택한 Caution 이미지가 표시됩니다. -->
+  </div>
+  
+  <!-- Note 이미지 선택 드롭다운 -->
+  <div class="dropdown-container">
+    <label for="noteSelect">Note 이미지 선택: </label>
+    <select id="noteSelect">
+      <option value="" selected disabled>Note 이미지를 선택하세요</option>
+    </select>
+  </div>
+  <div class="image-wrapper" id="noteImageDisplay">
+    <!-- 선택한 Note 이미지가 표시됩니다. -->
+  </div>
+
+  <!-- Warning 이미지 선택 드롭다운 (옵션 1개) -->
+  <div class="dropdown-container">
+    <label for="warningSelect">Warning 이미지 선택: </label>
+    <select id="warningSelect">
+      <option value="" selected disabled>Warning 이미지를 선택하세요</option>
+    </select>
+  </div>
+  <div class="image-wrapper" id="warningImageDisplay">
+    <!-- 선택한 Warning 이미지가 표시됩니다. -->
+  </div>
+
+  <script>
+    const videoSelect = document.getElementById('videoSelect');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoSource = document.getElementById('videoSource');
+    
+    const annotationSelect = document.getElementById('annotationSelect');
+    const annotationDisplay = document.getElementById('annotationDisplay');
+    
+    const ammSelect = document.getElementById('ammSelect');
+    const ammImageDisplay = document.getElementById('ammImageDisplay');
+
+    const cautionSelect = document.getElementById('cautionSelect');
+    const cautionImageDisplay = document.getElementById('cautionImageDisplay');
+    
+    const noteSelect = document.getElementById('noteSelect');
+    const noteImageDisplay = document.getElementById('noteImageDisplay');
+    
+    const warningSelect = document.getElementById('warningSelect');
+    const warningImageDisplay = document.getElementById('warningImageDisplay');
+
+    // 1) 동영상 드롭다운에 50개의 옵션 추가
+    for (let i = 1; i <= 50; i++) {
+      const option = document.createElement('option');
+      option.value = `videos/video${i}.mp4`;
+      option.textContent = `동영상 ${i}`;
+      videoSelect.appendChild(option);
+    }
+
+    // 동영상 선택 시 플레이어 업데이트
+    videoSelect.addEventListener('change', function() {
+      const selectedVideo = this.value;
+      if (selectedVideo) {
+        videoSource.src = selectedVideo;
+        videoPlayer.load();
+        videoPlayer.play();
+      }
+    });
+
+    // 2) Annotation 드롭다운에 50개의 옵션 추가
+    for (let i = 1; i <= 50; i++) {
+      const option = document.createElement('option');
+      option.value = `annotations/annotation${i}.json`;
+      option.textContent = `Annotation ${i}`;
+      annotationSelect.appendChild(option);
+    }
+
+    // Annotation 선택 시 파일 내용 불러오기
+    annotationSelect.addEventListener('change', function() {
+      const selectedAnnotation = this.value;
+      if (selectedAnnotation) {
+        fetch(selectedAnnotation)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('네트워크 응답에 문제가 있습니다.');
+            }
+            return response.json();
+          })
+          .then(data => {
+            annotationDisplay.textContent = JSON.stringify(data, null, 2);
+          })
+          .catch(error => {
+            annotationDisplay.textContent = 'Annotation 파일을 불러오는 중 오류가 발생했습니다.';
+            console.error('Annotation 불러오기 오류:', error);
+          });
+      }
+    });
+
+    // 3) AMM 이미지 드롭다운에 57개의 옵션 추가
+    for (let i = 1; i <= 57; i++) {
+      const option = document.createElement('option');
+      option.value = `amm/AMM${i}.png`;
+      option.textContent = `AMM 이미지 ${i}`;
+      ammSelect.appendChild(option);
+    }
+
+    // AMM 이미지 선택 시 화면에 표시
+    ammSelect.addEventListener('change', function() {
+      const selectedImage = this.value;
+      if (selectedImage) {
+        ammImageDisplay.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = selectedImage;
+        img.alt = `AMM 이미지 (${selectedImage})`;
+        ammImageDisplay.appendChild(img);
+      }
+    });
+
+    // 4) Caution 이미지 드롭다운에 2개의 옵션 추가
+    for (let i = 1; i <= 2; i++) {
+      const option = document.createElement('option');
+      option.value = `caution/Caution${i}.png`;
+      option.textContent = `Caution 이미지 ${i}`;
+      cautionSelect.appendChild(option);
+    }
+
+    // Caution 이미지 선택 시 화면에 표시
+    cautionSelect.addEventListener('change', function() {
+      const selectedImage = this.value;
+      if (selectedImage) {
+        cautionImageDisplay.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = selectedImage;
+        img.alt = `Caution 이미지 (${selectedImage})`;
+        cautionImageDisplay.appendChild(img);
+      }
+    });
+    
+    // 5) Note 이미지 드롭다운에 3개의 옵션 추가
+    for (let i = 1; i <= 3; i++) {
+      const option = document.createElement('option');
+      option.value = `note/Note${i}.png`;
+      option.textContent = `Note 이미지 ${i}`;
+      noteSelect.appendChild(option);
+    }
+
+    // Note 이미지 선택 시 화면에 표시
+    noteSelect.addEventListener('change', function() {
+      const selectedImage = this.value;
+      if (selectedImage) {
+        noteImageDisplay.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = selectedImage;
+        img.alt = `Note 이미지 (${selectedImage})`;
+        noteImageDisplay.appendChild(img);
+      }
+    });
+    
+    // 6) Warning 이미지 드롭다운에 1개의 옵션 추가 (1장만)
+    const warningOption = document.createElement('option');
+    warningOption.value = `warning/Warning1.png`;
+    warningOption.textContent = `Warning 이미지 1`;
+    warningSelect.appendChild(warningOption);
+
+    // Warning 이미지 선택 시 화면에 표시
+    warningSelect.addEventListener('change', function() {
+      const selectedImage = this.value;
+      if (selectedImage) {
+        warningImageDisplay.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = selectedImage;
+        img.alt = `Warning 이미지 (${selectedImage})`;
+        warningImageDisplay.appendChild(img);
+      }
+    });
+  </script>
+</body>
+</html>
